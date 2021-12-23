@@ -24,9 +24,6 @@ df = df.drop(columns='date')
 #df['date'] = pd.to_datetime(df['date'], format='%Y%m%d')
 df
 
-#df['date'] = df['date'].dt.date
-#df
-
 df.info()
 
 df.describe(include = 'all')
@@ -76,29 +73,6 @@ df['category']= label_encoder.fit_transform(df['category'])
 
 df
 
-#one-hot-encoding
-
-sign = pd.get_dummies(df.sign)
-category = pd.get_dummies(df.category)
-new_df = pd.concat([df, sign, category], axis=1) #, category
-new_df = new_df.drop(columns='sign')
-new_df = new_df.drop(columns='category')
-new_df
-
-#one-hot-encoding 2
-
-sign = pd.get_dummies(df.sign)
-category = pd.get_dummies(df.category)
-new_df = pd.concat([df, sign], axis=1) #, category
-new_df = new_df.drop(columns='sign')
-new_df
-
-horo = new_df['horoscope'].values
-labels = new_df[['aquarius', 'aries', 'cancer', 'capricorn', 'gemini', 'leo', 'libra', 'pisces', 'sagittarius', 'scorpio', 'taurus', 'virgo', 'birthday', 'career', 'general', 'love', 'wellness']].values #, 'birthday', 'career', 'general', 'love', 'wellness'
-
-horo = new_df['horoscope'].values
-labels = new_df[['aquarius', 'aries', 'cancer', 'capricorn', 'gemini', 'leo', 'libra', 'pisces', 'sagittarius', 'scorpio', 'taurus', 'virgo']].values #, 'birthday', 'career', 'general', 'love', 'wellness'
-
 horo = df['horoscope_stopword'].values
 labels = df[['sign', 'category']].values
 
@@ -117,6 +91,14 @@ sekuens_test = tokenizer.texts_to_sequences(horo_test)
  
 padded_latih = pad_sequences(sekuens_latih) 
 padded_test = pad_sequences(sekuens_test)
+
+word2index = tokenizer.word_index
+print(len(word2index))
+
+import json
+
+with open('word2index.json', 'w') as fp:
+    json.dump(word2index, fp)
 
 """**Modeling**"""
 
