@@ -80,9 +80,9 @@ labels = df[['sign', 'category']].values
 horo_latih, horo_test, labels_latih, labels_test = train_test_split(horo, labels, test_size=0.2)
 
 #fungsi tokenizer
-#filt = '!"#$%&()*+.,-/:;=?@[\]^_`{|}~ '
+filt = '!"#$%&()*+.,-/:;=?@[\]^_`{|}~ '
 
-tokenizer = Tokenizer(num_words=5000, oov_token='x')
+tokenizer = Tokenizer(num_words=5000, oov_token='<OOV>', filters = filt)
 tokenizer.fit_on_texts(horo_latih)
 tokenizer.fit_on_texts(horo_test)
  
@@ -127,6 +127,21 @@ model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accurac
 num_epochs = 10
 history = model.fit(padded_latih, labels_latih, epochs=num_epochs, 
                     validation_data=(padded_test, labels_test), verbose=2, callbacks=[callbacks])
+
+def toSequence(sentence):
+  pad = []
+  for stc in sentence.split():
+    if stc.lower() in word2index.keys(): 
+      pad.append(word2index[stc.lower()])
+    else: 
+      continue
+  return pad
+
+pad = toSequence('Look forward to a year of fun, mischief, and wild inventiveness! Youre bursting with fresh ideas.')
+len(pad)
+model.predict([pad])
+
+#[1, 0] = Aries/Birthday
 
 model.save("machinelearning.h5")
 
